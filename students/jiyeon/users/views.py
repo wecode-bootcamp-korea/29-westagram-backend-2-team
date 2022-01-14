@@ -27,8 +27,8 @@ class UserView(View):
         }
         실패 시
         {
-            "message" : "KEY_ERROR", status=400
-        }1
+            "message" : "KEY_ERROR"
+        }
         """
         data = json.loads(request.body)
 
