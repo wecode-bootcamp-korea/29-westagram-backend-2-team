@@ -37,13 +37,13 @@ class UserView(View):
         
         if not re.fullmatch(REGEX_EMAIL, data['email']): # 이메일 양식에 맞게 입력 되었는지 확인
             
-            return JsonResponse({"E-mail Error": "양식에 맞는 메일 주소를 입력해주세요."})
+            return JsonResponse({"E-mail Error": "양식에 맞는 메일 주소를 입력해주세요."}, status=400)
         
         if not re.fullmatch(REGEX_PASSWORD, data['password']): # 비밀번호 조건에 맞게 입력되었는지 확인
             
             return JsonResponse(
                 {"Password Error": "8자리 이상의 알파벳, 숫자, 특수문자(@$!%*?&)를 포함한 비밀번호를 입력해주세요."}
-                )
+                status=400)
 
         try:
             user, created = User.objects.get_or_create(
@@ -53,13 +53,13 @@ class UserView(View):
             phone_number = data['phone_number']
             )
         except User.DoesNotExist:
-            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."})
+            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."}, status=400)
         except IntegrityError:
-            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."})
+            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."}, status=400)
 
         
         if created == True:
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
 
         else:
-            return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."})
+            return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."}, status=400)
