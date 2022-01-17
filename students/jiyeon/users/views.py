@@ -33,6 +33,14 @@ class UserView(View):
 
         REGEX_EMAIL    = r'^[a-zA-Z0-9][a-zA-Z0-9._]+[@][a-zA-Z][A-Za-z.]+[.]\w{2,}'
         REGEX_PASSWORD = r'^(?=.*\w)(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
+
+        if 'email' not in data:
+
+            return JsonResponse({'message': 'email을 입력해주세요.'}, status=400)
+
+        if 'password' not in data:
+
+            return JsonResponse({'message': 'password를 입력해주세요.'}, status=400)
         
         if not re.fullmatch(REGEX_EMAIL, data['email']): # 이메일 양식에 맞게 입력 되었는지 확인
             
@@ -48,8 +56,8 @@ class UserView(View):
             User.objects.create(
                 name          = data['name'],
                 email         = data['email'],
-                password     = data['password'],
-                phone_number = data['phone_number']
+                password      = data['password'],
+                phone_number  = data['phone_number']
             )
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
 
