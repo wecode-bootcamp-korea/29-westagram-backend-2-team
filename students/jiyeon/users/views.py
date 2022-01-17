@@ -8,7 +8,7 @@ from .models import User
 
 class UserView(View):
     def post(self, request):
-        # POST 127.0.0.1:8000/user
+        # POST 127.0.0.1:8000/signup
         """
         1. 목적 : 클라이언트로부터 받은 사용자 데이터
         (이름, 이메일, 비밀번호, 연락처, 그외 개인정보)를 데이터베이스에 등록하기 위함
@@ -42,16 +42,15 @@ class UserView(View):
             
             return JsonResponse(
                 {"Password Error": "8자리 이상의 알파벳, 숫자, 특수문자(@$!%*?&)를 포함한 비밀번호를 입력해주세요."}
-                status=400)
+                ,status=400)
 
-        if not User.objects.filter(email=data['email']).exists()
+        if not User.objects.filter(email=data['email']).exists():
             User.objects.create(
                 name          = data['name'],
                 email         = data['email'],
-                passworld     = data['password'],
-                phone_numbers = data['phone_number']
+                password     = data['password'],
+                phone_number = data['phone_number']
             )
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
 
-        else:
-            return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."}, status=401)
+        return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."}, status=401)
