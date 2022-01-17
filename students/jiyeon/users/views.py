@@ -3,6 +3,7 @@ import re
 
 from django.views import View
 from django.http  import JsonResponse
+import bcrypt
 
 from .models import User
 
@@ -53,10 +54,13 @@ class SignupView(View):
                 ,status=400)
 
         if not User.objects.filter(email=data['email']).exists():
+            password        = data['password'].encode('utf-8')
+            hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
+
             User.objects.create(
                 name          = data['name'],
                 email         = data['email'],
-                password      = data['password'],
+                password      = hashed_password,
                 phone_number  = data['phone_number']
             )
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
@@ -95,9 +99,11 @@ class LoginView(View):
             return JsonResponse({'message': 'password를 입력해주세요.'}, status=400)
 
         if not User.objects.filter(email=data['email']).exists():
+
             return JsonResponse({'message': '존재하지 않는 이메일입니다.'}, status=401)
         
         if data['password'] != User.objects.get(email=data['email']).password:
+             
             return JsonResponse({'message': '비밀번호를 확인해주세요.'}, status=401)
 
         return JsonResponse({'message': '로그인 성공'}, status=200)
