@@ -27,7 +27,7 @@ class UserView(View):
         }
         실패 시
         {
-            "message" : "KEY_ERROR"
+            "message" : "E-mail Error": "양식에 맞는 메일 주소를 입력해주세요.", status=400
         }
         """
         data = json.loads(request.body)
@@ -45,21 +45,14 @@ class UserView(View):
                 {"Password Error": "8자리 이상의 알파벳, 숫자, 특수문자(@$!%*?&)를 포함한 비밀번호를 입력해주세요."}
                 status=400)
 
-        try:
-            user, created = User.objects.get_or_create(
-            name         = data['name'],
-            email        = data['email'],
-            password     = data['password'],
-            phone_number = data['phone_number']
+        if not User.objects.filter(email=data['email']).exists()
+            User.objects.create(
+                name          = data['name'],
+                email         = data['email'],
+                passworld     = data['password'],
+                phone_numbers = data['phone_number']
             )
-        except User.DoesNotExist:
-            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."}, status=400)
-        except IntegrityError:
-            return JsonResponse({"E-mail Error": f"중복된 이메일로 가입을 시도했습니다."}, status=400)
-
-        
-        if created == True:
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
 
         else:
-            return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."}, status=400)
+            return JsonResponse({"E-mail Error": "이미 가입된 회원입니다."}, status=401)
