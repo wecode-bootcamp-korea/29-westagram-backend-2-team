@@ -12,17 +12,16 @@ class SignUpView (View):
     def post(self, request):
         
         user_data   = json.loads(request.body)
-        print(user_data +'::'+ type(user_data) )#임시객체 확인용,
-        REX_EMAIL   = r'^[a-zA-Z0-9][a-zA-Z0-9_]+[@][a-zA-Z0-9][A-Za-z.]+[.]\w{2,}'
-        REX_PASS    = r'^(?=.*\w)(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{8,}$'
+        REX_EMAIL   = r'^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        REX_PASS    = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
         
         ## 1. name누락 
         if 'name' not in user_data :
             return JsonResponse({'message' : '이름을 입력해 주세요'}, status=400)
         ## 2. email 누락 
         if 'email' not in user_data :
-            return JsonResponse({'message' : '이메일은 필수입니다'}, status=400)
-        ## 3. password 누락
+            return JsonResponse({'message' : '이메일을 입력해 주세요'}, status=400)
+        ## 3. password 누락 
         if 'password' not in user_data :
             return JsonResponse({'message': '비밀번호를 입력해 주세요'}, status=400)
         ## 4. 이메일 양식 비충족
@@ -42,3 +41,5 @@ class SignUpView (View):
             return JsonResponse({'message' : 'SUCCESS'}, status=201)
         
         return JsonResponse({'message' : '이미 가입된 회원 입니다'}, status=401)
+
+        
