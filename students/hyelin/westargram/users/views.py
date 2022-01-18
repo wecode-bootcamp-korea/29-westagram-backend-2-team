@@ -1,12 +1,10 @@
 import json
-from logging import exception 
 import re
 
 from django.views import View
 from .models import User
 
 from django.http import JsonResponse
-
 
 class SignUpView (View):
     def post(self, request):
@@ -78,6 +76,7 @@ class LoginView(View):
         """
         try :
             data = json.loads(request.body)
+            # 이쯤에 암호화 
             user = User.objects.get(email__exact=data['email'])
             if user.password == data['password']:
                 return JsonResponse({'message' : 'SUCCESS'}, status = 201)
