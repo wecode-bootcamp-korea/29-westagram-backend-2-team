@@ -7,7 +7,6 @@ from .models import User
 from django.http import JsonResponse
 
 
-
 class SignUpView (View):
     def post(self, request):
 
