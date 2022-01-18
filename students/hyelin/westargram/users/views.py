@@ -10,7 +10,23 @@ from django.http import JsonResponse
 
 class SignUpView (View):
     def post(self, request):
-        
+
+        """
+        1. 목적 : 클라이언트로부터 받은 사용자 데이터
+        (이름, 이메일, 비밀번호, 연락처, 그외 개인정보)를 데이터베이스에 등록하기 위함
+        2. INPUT : 
+        {
+            "name"         : "hyelin",
+            "email"        : "rlafls9596@gamil.com",
+            "password"     : "rlagPFls95@",
+            "phone_number" : "01049093501"
+        }
+        3. OUTPUT : 
+        성공 시
+        {
+            "message" : "SUCCESS" , status=201
+        }
+        """
         user_data   = json.loads(request.body)
         REX_EMAIL   = r'^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
         REX_PASS    = r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
