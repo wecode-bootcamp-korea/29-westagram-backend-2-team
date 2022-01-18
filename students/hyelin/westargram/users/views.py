@@ -1,13 +1,11 @@
-from email import message
 import json 
 import re
-from urllib import response 
-##View
+
 from django.views import View
-##Model
 from .models import User
-##Http
+
 from django.http import JsonResponse
+
 
 
 class SignUpView (View):
@@ -70,7 +68,7 @@ class LoginView(View):
         2. INPUT : 
         {
             "email"        : "rlafls9596@gamil.com",
-            "password"     : "rlagPFls95@",
+            "password"     : "rlagPFls95@"
         }
         3. OUTPUT : 
         성공 시
@@ -82,13 +80,12 @@ class LoginView(View):
         data = json.loads(request.body)
 
         if 'email' not in data  or 'password' not in data :
-            return JsonResponse( {"message": "KEY_ERROR"}, status=400)
+            return JsonResponse( {"message": "KEY_ERROR"}, status = 400)
             
         if User.objects.filter(email=data['email']).exists() :
-            login_info = User.objects.get(email__exact=data['email'])
-            print(login_info)
-            if login_info.password == data['password']:
-                return JsonResponse({'message' : 'SUCCESS'}, status=201)
+            user = User.objects.get(email__exact=data['email'])
+            if user.password == data['password']:
+                return JsonResponse({'message' : 'SUCCESS'}, status = 201)
             else :
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
         else :
