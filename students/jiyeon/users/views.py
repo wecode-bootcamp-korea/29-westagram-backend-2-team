@@ -4,8 +4,10 @@ import re
 from django.views import View
 from django.http  import JsonResponse
 import bcrypt
+import jwt
 
 from .models import User
+from my_settings import ALGORITHM, SECRET_KEY
 
 class SignupView(View):
     def post(self, request):
@@ -60,7 +62,7 @@ class SignupView(View):
             User.objects.create(
                 name          = data['name'],
                 email         = data['email'],
-                password      = hashed_password,
+                password      = hashed_password.decode('utf-8'),
                 phone_number  = data['phone_number']
             )
             return JsonResponse({"message" : f"사용자 등록 성공, {data['email']}"}, status=201)
@@ -102,8 +104,14 @@ class LoginView(View):
 
             return JsonResponse({'message': '존재하지 않는 이메일입니다.'}, status=401)
         
-        if data['password'] != User.objects.get(email=data['email']).password:
+        password        = data['password'].encode('utf-8')
+        user            = User.objects.get(email=data['email'])
+        hashed_password = user.password.encode('utf-8')
+
+        if not bcrypt.checkpw(password, hashed_password):
              
             return JsonResponse({'message': '비밀번호를 확인해주세요.'}, status=401)
 
-        return JsonResponse({'message': '로그인 성공'}, status=200)
+        token = jwt.encode({'user_id': user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        return JsonResponse({'message': '로그인 성공', 'token': token}, status=200)
