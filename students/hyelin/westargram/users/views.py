@@ -1,5 +1,7 @@
+from email import message
 import json 
-import re 
+import re
+from urllib import response 
 ##View
 from django.views import View
 ##Model
@@ -58,4 +60,20 @@ class SignUpView (View):
         
         return JsonResponse({'message' : '이미 가입된 회원 입니다'}, status=401)
 
-        
+class LoginView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+
+        if 'email' not in data  or 'password' not in data :
+            return JsonResponse( {"message": "KEY_ERROR"}, status=400)
+        ##2. email이나 password 어떤 하나라도 잘못된 입력시 401  {"message": "INVALID_USER"},  {"message": "INVALID_Email"}
+        #존재하지 않는 이메일인 겨우
+        #이메일은 맞지만 비번이 잘못된 경우
+        if User.objects.get(headline__exact=data['email']).exists() :
+            if data['password'] == User.objects.get(headline__exact=data['email'])['password'] :
+                return JsonResponse({'message' : 'SUCCESS'}, status=201)
+            else :
+                return JsonResponse({"message": "INVALID_USER"}, status = 401)        
+        ##3. 올바른 입력인 경우 -> {'message' : 'SUCCESS'} 로그인 성공 200
+        else :
+            return JsonResponse({"message": "INVALID_EMAIL"}, status = 401)
