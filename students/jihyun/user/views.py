@@ -38,10 +38,9 @@ class UserView(View) :
                 if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$", data['password']):
                     return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=404)
 
-                if not User.objects.filter(email=data['email']).exists():
-                    password        = data['password'].encode('utf-8')
-                    hashed_password = bcrypt.hashpw(password, bvrypt.gensalt())
+            hashed_password= bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
+            
                     User.objects.create(
                         name              = data['name']
                         email             = data['email']
