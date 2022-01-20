@@ -38,19 +38,15 @@ class SignupView(View):
         REGEX_PASSWORD = r'^(?=.*\w)(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
 
         if 'email' not in data:
-
             return JsonResponse({'message': 'email을 입력해주세요.'}, status=400)
 
         if 'password' not in data:
-
             return JsonResponse({'message': 'password를 입력해주세요.'}, status=400)
         
         if not re.fullmatch(REGEX_EMAIL, data['email']): # 이메일 양식에 맞게 입력 되었는지 확인
-            
             return JsonResponse({"E-mail Error": "양식에 맞는 메일 주소를 입력해주세요."}, status=400)
         
         if not re.fullmatch(REGEX_PASSWORD, data['password']): # 비밀번호 조건에 맞게 입력되었는지 확인
-            
             return JsonResponse(
                 {"Password Error": "8자리 이상의 알파벳, 숫자, 특수문자(@$!%*?&)를 포함한 비밀번호를 입력해주세요."}
                 ,status=400)
@@ -93,15 +89,12 @@ class LoginView(View):
         data = json.loads(request.body)
 
         if 'email' not in data:
-
             return JsonResponse({'message': 'email을 입력해주세요.'}, status=400)
 
         if 'password' not in data:
-
             return JsonResponse({'message': 'password를 입력해주세요.'}, status=400)
 
         if not User.objects.filter(email=data['email']).exists():
-
             return JsonResponse({'message': '존재하지 않는 이메일입니다.'}, status=401)
         
         password        = data['password'].encode('utf-8')
@@ -109,7 +102,6 @@ class LoginView(View):
         hashed_password = user.password.encode('utf-8')
 
         if not bcrypt.checkpw(password, hashed_password):
-             
             return JsonResponse({'message': '비밀번호를 확인해주세요.'}, status=401)
 
         token = jwt.encode({'user_id': user.id}, SECRET_KEY, algorithm=ALGORITHM)
