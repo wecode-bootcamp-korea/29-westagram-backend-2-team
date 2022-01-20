@@ -11,6 +11,3 @@ from django.db import models
 
      class Meta :
          db_table = 'users'
-
-
-         

@@ -2,6 +2,7 @@ import json
 
 from django.views import View
 from django.http import JsonResponse
+from django.conf import settings
 # Create your views here.
 
 from user.models import user
@@ -38,9 +39,9 @@ class UserView(View) :
                 if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$", data['password']):
                     return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=404)
 
-            hashed_password= bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+                    hashed_password= bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-            
+
                     User.objects.create(
                         name              = data['name']
                         email             = data['email']
@@ -57,7 +58,26 @@ class UserView(View) :
 class LoginView(View):
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            data            = json.loads(request.body)
+            user            = User.objects.get(email=data["email"])
+            hashed_password = user.password.encode("utf-8")
+
+            if not bcrypt.checkpw(data["password"].encode("utf-8"), hashed_password):
+                return JsonResponse({"MESSAGE":"INVALID_USER"}, status=401)
+
+            access_token = jwt.encode({"id" : user.id}, "secret_key", algorithm = "HS256")
+
+                return JsonResponse({"MESSAGE":"SUCCESS", "ACCESS_TOKEN": access_token}, status=200)
+
+
+        except json.JSONDecodeError:
+            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status=404)
+
+        except User.DoesNotExist:
+            return JsonResponse({"MESSAGE": "INVALID_USER"}, status=404)
+
+        except KeyError:
+            return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status=400)
 
             if not User.objects.filter(email=data['email']):
                 return JsonResponse({'message' : 'INVALID_USER'}, status=401)
