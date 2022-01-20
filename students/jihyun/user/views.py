@@ -6,8 +6,10 @@ from django.conf import settings
 # Create your views here.
 
 from user.models import user
+from my_settings import ALGORITHM, SECRET_KEY
 
 import bcrypt
+import jwt
 
 class UserView(View) :
 
@@ -39,14 +41,14 @@ class UserView(View) :
                 if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$", data['password']):
                     return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=404)
 
-            hashed_password= bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+                    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
 
                     User.objects.create(
-                        name              = data['name']
-                        email             = data['email']
-                        password          = data['password']
-                        phonenumber       = data['phonenumber']
+                        name              = data['name'],
+                        email             = data['email'],
+                        password          = hashed_password.decode('utf-8'),
+                        phonenumber       = data['phonenumber'],
                         other_information = data.get['other_information']
                         )
                     return JsonResponse({'message' : 'SUCCESS'}, status = 201)
@@ -79,13 +81,8 @@ class LoginView(View):
         except KeyError:
             return JsonResponse({"MESSAGE" : "KEY_ERROR"}, status=400)
 
-            if not User.objects.filter(email=data['email']):
-                return JsonResponse({'message' : 'INVALID_USER'}, status=401)
-
-            if User.objects.get(email=data['email']).password != data['pasword']:
-                return JsonResponse({'message' : 'INVALID_USER'}, status=401)
-
-            return JsonResponse({'message' : 'SUCCESS'}, status=200)
-
-        except KeyError:
-            return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
+        #     if not User.objects.filter(email=data['email']):
+        #         return JsonResponse({'message' : 'INVALID_USER'}, status=401)
+        #
+        #     if User.objects.get(email=data['email']).password != data['pasword']:
+        #         return JsonResponse({'message' : 'INVALID_USER'}, status=401)
