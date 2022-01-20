@@ -45,7 +45,7 @@ class UserView(View) :
                     User.objects.create(
                         name              = data['name']
                         email             = data['email']
-                        password          = data['password']
+                        password          = hashed_password
                         phonenumber       = data['phonenumber']
                         other_information = data.get['other_information']
                         )
