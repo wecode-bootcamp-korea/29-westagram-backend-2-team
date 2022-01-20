@@ -29,21 +29,18 @@ class PostingView(View):
         """
         data = json.loads(request.body)
 
-        if 'img_url' not in data:
-
-            return JsonResponse({'message': 'url을 입력해주세요.'}, status=400)
-
-        if 'user_id' not in data:
-
-            return JsonResponse({'message': 'user_id를 입력하세요'}, status=400)
-
+        try:
+            img_url = data['img_url']
+            user_id = data['user_id']
+        except KeyError:
+            return JsonResponse({'message' : 'KEY ERROR'}, status=400)
+            
         if not User.objects.filter(id=data['user_id']).exists():
-
-            return JsonResponse({"message": f"user_id가 존재하지 않습니다. user_id:{data['user_id']}"}, status=400)
+            return JsonResponse({"message": f"user_id가 존재하지 않습니다."}, status=400)
     
         Posting.objects.create(
-            user_id = data['user_id'],
-            img_url = data['img_url'],
+            user_id = user_id,
+            img_url = img_url,
             content = data['content']
         )
 
