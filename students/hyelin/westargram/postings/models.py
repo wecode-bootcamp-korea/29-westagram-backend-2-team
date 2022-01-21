@@ -1,20 +1,12 @@
 from django.db import models
 from users.models import User
 
-class Post(models.Model):
-    title           = models.CharField(max_length = 200)
+class Board(models.Model):
     writer          = models.ForeignKey(User, on_delete = models.CASCADE)    
-    content         = models.CharField(max_length = 300)
+    content         = models.CharField(max_length = 300, blank=True)
+    image_url       = models.URLField(blank=True)
     written_date    = models.DateTimeField(auto_now_add = True)
     updated_date    = models.DateTimeField(auto_now = True)
     
     class Meta :
-        db_table='posts'
-
-class PostImage(models.Model) :
-    post_id         = models.ForeignKey(Post, on_delete= models.CASCADE)
-    img_url         = models.URLField(max_length= 200, blank= False)
-    uproaded_date   = models.DateTimeField(auto_now_add= True)
-
-    class Meta :
-        db_table = 'postimages'
+        db_table='boards'
