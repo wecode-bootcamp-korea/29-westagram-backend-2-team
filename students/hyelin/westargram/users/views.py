@@ -93,3 +93,6 @@ class LoginView(View):
 
         except ValueError :
             return JsonResponse({"message": "INVALID_USER"}, status = 401)
+            
+        except DoseNotExist :
+             return JsonResponse({"message": "KEY_ERROR"}, status = 400)
