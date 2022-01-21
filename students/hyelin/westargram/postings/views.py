@@ -1,9 +1,8 @@
-from email import contentmanager
-from email.mime import image
 from django.views import View
-from .models import Board
 
+from .models import Board
 from users.models import User
+
 from django.http import JsonResponse
 
 class WritePostView(View) :
