@@ -16,6 +16,12 @@ Including another URLconf
 
 from django.urls import path
 
+from users.view import UserView, LoginView
+from postings.view import PostingView
+
 urlpatterns = [
+    path('signup', UserView.as_view())
+    path('login', LoginView.as_view())
+    path('posting', PostingView.as_view())
 
 ]
