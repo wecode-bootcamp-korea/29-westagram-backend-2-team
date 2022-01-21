@@ -6,5 +6,5 @@ from postings.views import PostingView
 urlpatterns = [
     path('signup', SignupView.as_view()),
     path('login', LoginView.as_view()),
-    path('post', PostingView.as_view())
+    path('posting', PostingView.as_view())
 ]
